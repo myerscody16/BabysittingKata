@@ -2,14 +2,17 @@
 @{
     ViewData["Title"] = "CreateAppointment";
 }
-
+@model PillarTechBabysittingKata.Models.Appointments
 <h1>Create an appointment</h1>
 
 <form asp-action="CreateAppointment" method="post">
+    <input type="hidden" name="Id" />
     Family:
     A: <input type="radio" name="FamilyId" value="A" />
     B: <input type="radio" name="FamilyId" value="B" />
     C: <input type="radio" name="FamilyId" value="C" />
-    Start time: <input type="datetime-local" name="StartTime" value="@string.Format("{0:YYYY-MM-DDThh:mm:ss}")" />
-    End time: <input type="datetime" name="EndTime" value="" />
+    </br>
+    Start time: <input type="datetime-local"name="StartTime" value="@Model.StartTime.ToString("YYYY-MM-ddThh")" min="2018-06-07T00" max="2018-06-14T00">
+    End time: <input type="datetime-local" name="EndTime" value="" />
+    <input type="submit" value="Add new appointment" />
 </form>
