@@ -1,18 +1,43 @@
 ﻿
 @{
-    ViewData["Title"] = "CreateAppointment";
+    ViewData["Title"] = "Create an appointment";
 }
-@model PillarTechBabysittingKata.Models.Appointments
 <h1>Create an appointment</h1>
 
 <form asp-action="CreateAppointment" method="post">
-    <input type="hidden" name="Id" />
     Family:
-    A: <input type="radio" name="FamilyId" value="A" />
+    A: <input type="radio" name="FamilyId" value="A" required/>
     B: <input type="radio" name="FamilyId" value="B" />
     C: <input type="radio" name="FamilyId" value="C" />
-    </br>
-    Start time: <input type="datetime-local"name="StartTime" value="@Model.StartTime.ToString("YYYY-MM-ddThh")" min="2018-06-07T00" max="2018-06-14T00">
-    End time: <input type="datetime-local" name="EndTime" value="" />
-    <input type="submit" value="Add new appointment" />
+    <br>
+    Date: <input type="date" name="StartDate" required/>
+    Starting time:
+    <select name="StartTime" required>
+        <option value="05:00:00">5PM</option>
+        <option value="06:00:00">6PM</option>
+        <option value="07:00:00">7PM</option>
+        <option value="08:00:00">8PM</option>
+        <option value="09:00:00">9PM</option>
+        <option value="10:00:00">10PM</option>
+        <option value="11:00:00">11PM</option>
+        <option value="12:00:00">12PM</option>
+        <option value="01:00:00">1AM</option>
+        <option value="02:00:00">2AM</option>
+        <option value="03:00:00">3AM</option>
+    </select>
+    Ending Time:
+    <select name="EndTime" min="StartTime" required>
+        <option value="06:00:00">6PM</option>
+        <option value="07:00:00">7PM</option>
+        <option value="08:00:00">8PM</option>
+        <option value="09:00:00">9PM</option>
+        <option value="10:00:00">10PM</option>
+        <option value="11:00:00">11PM</option>
+        <option value="12:00:00">12PM</option>
+        <option value="01:00:00">1AM</option>
+        <option value="02:00:00">2AM</option>
+        <option value="03:00:00">3AM</option>
+        <option value="04:00:00">4AM</option>
+    </select>
+    <input type="submit" value="Create appointment" />
 </form>

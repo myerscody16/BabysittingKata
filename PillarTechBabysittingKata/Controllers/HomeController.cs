@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using PillarTechBabysittingKata.Models;
 
 namespace PillarTechBabysittingKata.Controllers
@@ -11,14 +12,17 @@ namespace PillarTechBabysittingKata.Controllers
     public class HomeController : Controller
     {
         private readonly BabysittingDbContext _context;
+        private readonly IConfiguration _configuration;
 
-        public HomeController (BabysittingDbContext context)
+        public HomeController (BabysittingDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
         public IActionResult Index()
         {
-            return View();
+            List<Appointments> allAppointments = _context.Appointments.ToList();
+            return View(allAppointments);
         }
         [HttpGet]
         public IActionResult CreateAppointment()
@@ -28,32 +32,76 @@ namespace PillarTechBabysittingKata.Controllers
         [HttpPost]
         public IActionResult CreateAppointment(Appointments newAppointment)
         {
-            //List<Appointments> appointments = _context.Appointments.ToList();
-            //_context.Add(newAppointment);
-            //_context.SaveChanges();
             return RedirectToAction("ConfirmPage", newAppointment);
         }
         public IActionResult ConfirmPage(Appointments newAppointment)
         {
+            //Calculate total here
+            if(newAppointment.FamilyId == "A")
+            {
+                newAppointment.TotalCost = CalculateFamilyA();
+            }
+            else if (newAppointment.FamilyId == "B")
+            {
+                newAppointment.TotalCost = CalculateFamilyB();
+            }
+            else if (newAppointment.FamilyId == "C")
+            {
+                newAppointment.TotalCost = CalculateFamilyC();
+            }
             return View(newAppointment);
         }
         public IActionResult AddAppointment(Appointments newAppointment)
         {
-            List<Appointments> appointments = _context.Appointments.ToList();
-            _context.Add(newAppointment);
-            _context.SaveChanges();
-            return RedirectToAction("ListOfAppointments");
+            if(ModelState.IsValid)
+            {
+                _context.Add(newAppointment);
+                _context.SaveChanges();
+            }
+            return RedirectToAction("Index");
         }
-        public IActionResult ListOfAppointments()
+        public IActionResult ListOfUpcomingAppointments()
         {
             List<Appointments> allAppointments = _context.Appointments.ToList();
-            return View();
+            List<Appointments> orderedAppointments = new List<Appointments> { };
+            foreach(Appointments appointment in allAppointments)
+            {
+                if(appointment.FamilyId == "A" && appointment.StartDate > DateTime.Now)
+                {
+                    orderedAppointments.Add(appointment);
+                }
+            }
+            foreach (Appointments appointment in allAppointments)
+            {
+                if (appointment.FamilyId == "B" && appointment.StartDate > DateTime.Now)
+                {
+                    orderedAppointments.Add(appointment);
+                }
+            }
+            foreach (Appointments appointment in allAppointments)
+            {
+                if (appointment.FamilyId == "C" && appointment.StartDate > DateTime.Now)
+                {
+                    orderedAppointments.Add(appointment);
+                }
+            }
+            return View(orderedAppointments);
         }
-        //public IActionResult ListFamilyAppointment(Appointments newAppointment)
-        //{
-        //    List<Appointments> allAppointments = _context.Appointments.Where(u => u.FamilyId == newAppointment.FamilyId).ToList();//write test to make sure this works
-        //    return View(allAppointments);
-        //}
+        public static int CalculateFamilyA()
+        {
+            int TotalCost = 0;
+            return TotalCost;
+        }
+        public static int CalculateFamilyB()
+        {
+            int TotalCost = 0;
+            return TotalCost;
+        }
+        public static int CalculateFamilyC()
+        {
+            int TotalCost = 0;
+            return TotalCost;
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

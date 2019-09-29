@@ -12,8 +12,8 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
   </ItemGroup>
 
-  <ItemGroup>
+  <!--<ItemGroup>
     <ProjectReference Include="..\..\PillarTechBabysittingKata\PillarTechBabysittingKata.csproj"/>
-  </ItemGroup>
+  </ItemGroup>-->
 
 </Project>

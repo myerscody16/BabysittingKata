@@ -1,5 +1,62 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-
+@model IEnumerable<PillarTechBabysittingKata.Models.Appointments>
 @*Turn into 6 calendars, two for each family with appointments, one for the current month and one for the following month*@
+All of Family A's appointments
+<table class="table">
+    <tr>
+        <th>Date</th>
+        <th>Start time</th>
+        <th>End time</th>
+    </tr>
+    @foreach (var appointment in Model)
+    {
+        @if (appointment.FamilyId == "A")
+        {
+            <tr>
+                <td>@appointment.StartDate.ToShortDateString()</td>
+                <td>@appointment.StartTime</td>
+                <td>@appointment.EndTime</td>
+            </tr>
+        }
+    }
+</table>
+All of Family B's appointments
+<table class="table">
+    <tr>
+        <th>Date</th>
+        <th>Start time</th>
+        <th>End time</th>
+    </tr>
+    @foreach (var appointment in Model)
+    {
+        @if (appointment.FamilyId == "B")
+        {
+            <tr>
+                <td>@appointment.StartDate.ToShortDateString()</td>
+                <td>@appointment.StartTime</td>
+                <td>@appointment.EndTime</td>
+            </tr>
+        }
+    }
+</table>
+All of Family C's appointments
+<table class="table">
+    <tr>
+        <th>Date</th>
+        <th>Start time</th>
+        <th>End time</th>
+    </tr>
+    @foreach (var appointment in Model)
+    {
+        @if (appointment.FamilyId == "C")
+        {
+            <tr>
+                <td>@appointment.StartDate.ToShortDateString()</td>
+                <td>@appointment.StartTime</td>
+                <td>@appointment.EndTime</td>
+            </tr>
+        }
+    }
+</table>

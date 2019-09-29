@@ -22,6 +22,7 @@ namespace PillarTechBabysittingKata.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseSqlServer("Server=.\\sqlexpress;Database=BabysittingDb;Trusted_Connection=True;");
             }
         }
@@ -32,13 +33,11 @@ namespace PillarTechBabysittingKata.Models
 
             modelBuilder.Entity<Appointments>(entity =>
             {
-                entity.Property(e => e.EndTime).HasColumnType("datetime");
-
                 entity.Property(e => e.FamilyId)
                     .IsRequired()
                     .HasMaxLength(1);
 
-                entity.Property(e => e.StartTime).HasColumnType("datetime");
+                entity.Property(e => e.StartDate).HasColumnType("date");
             });
 
             modelBuilder.Entity<FamilyPayRates>(entity =>

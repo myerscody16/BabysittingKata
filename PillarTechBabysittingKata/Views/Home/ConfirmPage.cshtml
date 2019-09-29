@@ -9,9 +9,13 @@
 Is the information for this appointment correct?
 
 <form asp-action="AddAppointment">
-    <input type="hidden" name="Id" />
-    Family: @Model.FamilyId
-    Start time: @Model.StartTime
-    End time: @Model.EndTime
+    <input type="hidden" name="StartDate" value="@Model.StartDate" />
+    <input type="hidden" name="StartTime" value="@Model.StartTime" />
+    <input type="hidden" name="EndTime" value="@Model.EndTime" />
+    <input type="hidden" name="FamilyId" value="@Model.FamilyId" />
     <input type="submit" value="Confirm" />
 </form>
+    Family: @Model.FamilyId
+    Date: @Model.StartDate.ToShortDateString()
+    Start time: @Model.StartTime
+    End time: @Model.EndTime
