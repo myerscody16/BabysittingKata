@@ -39,15 +39,15 @@ namespace PillarTechBabysittingKata.Controllers
             //Calculate total here
             if(newAppointment.FamilyId == "A")
             {
-                newAppointment.TotalCost = CalculateFamilyA();
+                newAppointment.TotalCost = CalculateFamilyA(newAppointment);
             }
             else if (newAppointment.FamilyId == "B")
             {
-                newAppointment.TotalCost = CalculateFamilyB();
+                newAppointment.TotalCost = CalculateFamilyB(newAppointment);
             }
             else if (newAppointment.FamilyId == "C")
             {
-                newAppointment.TotalCost = CalculateFamilyC();
+                newAppointment.TotalCost = CalculateFamilyC(newAppointment);
             }
             return View(newAppointment);
         }
@@ -87,19 +87,75 @@ namespace PillarTechBabysittingKata.Controllers
             }
             return View(orderedAppointments);
         }
-        public static int CalculateFamilyA()
+        public IActionResult UpdateAppointment(Appointments newAppointment)
+        {
+            return View(newAppointment);
+        }
+        public int CalculateFamilyA(Appointments newAppointment)//needs to be tested and logic checked
         {
             int TotalCost = 0;
+            List<FamilyPayRates> familyAPayRates = _context.FamilyPayRates.Where(u => u.FamilyLetter == "A").ToList();
+            foreach(var timeframe in familyAPayRates)
+            {
+                if(newAppointment.StartTime >= timeframe.StartTime && newAppointment.StartTime < timeframe.EndTime)
+                {
+                    TimeSpan timeSpan = timeframe.EndTime.Subtract(newAppointment.StartTime);
+                    TotalCost += Convert.ToInt32(timeSpan.TotalHours) * timeframe.PayRate;
+                }
+                else if(newAppointment.StartTime < timeframe.StartTime)
+                {
+                    TimeSpan timeSpan = newAppointment.EndTime.Subtract(timeframe.StartTime);
+                    TotalCost += Convert.ToInt32(timeSpan.TotalHours) * timeframe.PayRate;
+                }
+            }
             return TotalCost;
         }
-        public static int CalculateFamilyB()
+        public int CalculateFamilyB(Appointments newAppointment)//needs logic checked
         {
             int TotalCost = 0;
+            List<FamilyPayRates> familyBPayRates = _context.FamilyPayRates.Where(u => u.FamilyLetter == "B").ToList();
+            foreach (var timeframe in familyBPayRates)
+            {
+                if (newAppointment.StartTime >= timeframe.StartTime && newAppointment.StartTime < timeframe.EndTime)
+                {
+                    TimeSpan timeSpan = timeframe.EndTime.Subtract(newAppointment.StartTime);
+                    TotalCost += Convert.ToInt32(timeSpan.TotalHours) * timeframe.PayRate;
+                }
+                else if (newAppointment.StartTime < timeframe.StartTime && newAppointment.EndTime > timeframe.EndTime)
+                {
+                    TimeSpan timeSpan = timeframe.EndTime.Subtract(timeframe.StartTime);
+                    TotalCost += Convert.ToInt32(timeSpan.TotalHours) * timeframe.PayRate;
+                }
+                else if(newAppointment.StartTime < timeframe.StartTime && newAppointment.EndTime <= timeframe.EndTime)
+                {
+                    TimeSpan timeSpan = timeframe.EndTime.Subtract(timeframe.StartTime);
+                    TotalCost += Convert.ToInt32(timeSpan.TotalHours) * timeframe.PayRate;
+                }
+                else if (newAppointment.StartTime > timeframe.StartTime && newAppointment.EndTime <= timeframe.EndTime)
+                {
+                    TimeSpan timeSpan = timeframe.EndTime.Subtract(newAppointment.StartTime);
+                    TotalCost += Convert.ToInt32(timeSpan.TotalHours) * timeframe.PayRate;
+                }
+            }
             return TotalCost;
         }
-        public static int CalculateFamilyC()
+        public int CalculateFamilyC(Appointments newAppointment)//needs to be tested and logic checked
         {
             int TotalCost = 0;
+            List<FamilyPayRates> familyCPayRates = _context.FamilyPayRates.Where(u => u.FamilyLetter == "C").ToList();
+            foreach (var timeframe in familyCPayRates)
+            {
+                if (newAppointment.StartTime >= timeframe.StartTime && newAppointment.StartTime < timeframe.EndTime)
+                {
+                    TimeSpan timeSpan = timeframe.EndTime.Subtract(newAppointment.StartTime);
+                    TotalCost += Convert.ToInt32(timeSpan.TotalHours) * timeframe.PayRate;
+                }
+                else if (newAppointment.StartTime < timeframe.StartTime)
+                {
+                    TimeSpan timeSpan = newAppointment.EndTime.Subtract(timeframe.StartTime);
+                    TotalCost += Convert.ToInt32(timeSpan.TotalHours) * timeframe.PayRate;
+                }
+            }
             return TotalCost;
         }
 

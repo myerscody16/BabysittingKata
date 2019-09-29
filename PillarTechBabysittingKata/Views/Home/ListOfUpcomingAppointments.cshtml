@@ -1,9 +1,9 @@
 ﻿
 @{
-    ViewData["Title"] = "ListOfAppointments";
+    ViewData["Title"] = "Upcoming Appointments";
 }
 
-<h1>List Of Appointments</h1>
+<h1>Upcoming Appointments</h1>
 
 @model IEnumerable<PillarTechBabysittingKata.Models.Appointments>
 
@@ -13,12 +13,13 @@
         <th>Date</th>
         <th>Start Time</th>
         <th>End Time</th>
+        <th>Total Cost</th>
     </tr>
     @foreach(var appointment in Model)
     {
     <tr>
         <td>@appointment.FamilyId</td>
-        <td>@appointment.StartDate</td>
+        <td>@appointment.StartDate.ToShortDateString()</td>
         <td>@appointment.StartTime</td>
         <td>@appointment.EndTime</td>
         <td>@appointment.TotalCost</td>
