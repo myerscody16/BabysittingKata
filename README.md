@@ -1,20 +1,21 @@
---CREATE DATABASE BabysittingDb
---use BabysittingDb
+CREATE DATABASE BabysittingDb
+use BabysittingDb
 
---CREATE TABLE FamilyPayRates(
---	Id INT PRIMARY KEY IDENTITY(1,1),
---	FamilyLetter NVARCHAR(1) NOT NULL,
---	PayRate INT NOT NULL,
---	StartTime TIME NOT NULL,
---	EndTime TIME NOT NULL);
+CREATE TABLE FamilyPayRates(
+	Id INT PRIMARY KEY IDENTITY(1,1),
+	FamilyLetter NVARCHAR(1) NOT NULL,
+	PayRate INT NOT NULL,
+	StartTime TIME NOT NULL,
+	EndTime TIME NOT NULL);
 
 
---CREATE TABLE Appointments(
---	Id INT PRIMARY KEY IDENTITY(1,1),
---	FamilyId NVARCHAR(1) NOT NULL,
---	StartTime DATETIME NOT NULL,
---	EndTime DATETIME NOT NULL,
---	TotalCost INT);
+CREATE TABLE Appointments(
+	Id INT PRIMARY KEY IDENTITY(1,1),
+	FamilyId NVARCHAR(1) NOT NULL,
+	StartDate DATE NOT NULL,
+	StartTime TIME NOT NULL,
+	EndTime TIME NOT NULL,
+	TotalCost INT);
 
 INSERT INTO FamilyPayRates (FamilyLetter,PayRate, StartTime,EndTime)
 VALUES('A',15,'05:00:00','11:00:00'),
