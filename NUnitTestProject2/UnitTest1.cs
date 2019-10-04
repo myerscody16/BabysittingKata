@@ -2,7 +2,13 @@ using NUnit.Framework;
 using PillarTechBabysittingKata.Controllers;
 using PillarTechBabysittingKata.Models;
 using System;
-
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
 namespace Tests
 {
     public class Test 
@@ -31,14 +37,14 @@ namespace Tests
         [TestCase("05:00:00", "12:00:00", ExpectedResult = 76)]
         [TestCase("07:00:00", "2:00:00", ExpectedResult = 84)]
         [TestCase("06:00:00", "04:00:00", ExpectedResult = 128)]
-        public int TestCalcFamB(TimeSpan start, TimeSpan end)
+        public int TestCalcFamB(string start, string end)
         {
             int TotalCost = 0;
             Appointments newAppointment = new Appointments();
             newAppointment.FamilyId = "B";
             newAppointment.StartDate = Convert.ToDateTime("2019-10-4");
-            newAppointment.StartTime = start;
-            newAppointment.EndTime = end;
+            newAppointment.StartTime = TimeSpan.Parse(start);
+            newAppointment.EndTime = TimeSpan.Parse(end);
             newAppointment.TotalCost = 0;
             newAppointment.Id = 7;
             TotalCost = HomeController.CalculateFamilyB(newAppointment);
@@ -47,14 +53,14 @@ namespace Tests
         [TestCase("05:00:00", "12:00:00", ExpectedResult = 129)]
         [TestCase("07:00:00", "2:00:00", ExpectedResult = 117)]
         [TestCase("06:00:00", "04:00:00", ExpectedResult = 168)]
-        public int TestCalcFamC(TimeSpan start, TimeSpan end)
+        public int TestCalcFamC(string start, string end)
         {
             int TotalCost = 0;
             Appointments newAppointment = new Appointments();
             newAppointment.FamilyId = "C";
             newAppointment.StartDate = Convert.ToDateTime("2019-10-4");
-            newAppointment.StartTime = start;
-            newAppointment.EndTime = end;
+            newAppointment.StartTime = TimeSpan.Parse(start);
+            newAppointment.EndTime = TimeSpan.Parse(end);
             newAppointment.TotalCost = 0;
             newAppointment.Id = 7;
             TotalCost = HomeController.CalculateFamilyC(newAppointment);

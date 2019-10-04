@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
 using PillarTechBabysittingKata.Controllers;
 using PillarTechBabysittingKata.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace PillarTechBabysittingKata.Controllers
 {
@@ -104,7 +105,7 @@ namespace PillarTechBabysittingKata.Controllers
                     TimeSpan timeSpan = timeframe.EndTime.Subtract(newAppointment.StartTime);
                     TotalCost += Convert.ToInt32(timeSpan.TotalHours) * timeframe.PayRate;
                 }
-                else if (newAppointment.StartTime < timeframe.StartTime)
+                if (newAppointment.StartTime < timeframe.StartTime)
                 {
                     TimeSpan timeSpan = newAppointment.EndTime.Subtract(timeframe.StartTime);
                     TotalCost += Convert.ToInt32(timeSpan.TotalHours) * timeframe.PayRate;
