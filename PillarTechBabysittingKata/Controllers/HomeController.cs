@@ -5,16 +5,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using NUnit.Framework;
+using PillarTechBabysittingKata.Controllers;
 using PillarTechBabysittingKata.Models;
 
 namespace PillarTechBabysittingKata.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly BabysittingDbContext _context;
+        private static BabysittingDbContext _context;
         private readonly IConfiguration _configuration;
 
-        public HomeController (BabysittingDbContext context, IConfiguration configuration)
+        public HomeController(BabysittingDbContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;
@@ -37,7 +39,7 @@ namespace PillarTechBabysittingKata.Controllers
         public IActionResult ConfirmPage(Appointments newAppointment)
         {
             //Calculate total here
-            if(newAppointment.FamilyId == "A")
+            if (newAppointment.FamilyId == "A")
             {
                 newAppointment.TotalCost = CalculateFamilyA(newAppointment);
             }
@@ -53,7 +55,7 @@ namespace PillarTechBabysittingKata.Controllers
         }
         public IActionResult AddAppointment(Appointments newAppointment)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 _context.Add(newAppointment);
                 _context.SaveChanges();
@@ -64,9 +66,9 @@ namespace PillarTechBabysittingKata.Controllers
         {
             List<Appointments> allAppointments = _context.Appointments.ToList();
             List<Appointments> orderedAppointments = new List<Appointments> { };
-            foreach(Appointments appointment in allAppointments)
+            foreach (Appointments appointment in allAppointments)
             {
-                if(appointment.FamilyId == "A" && appointment.StartDate > DateTime.Now)
+                if (appointment.FamilyId == "A" && appointment.StartDate > DateTime.Now)
                 {
                     orderedAppointments.Add(appointment);
                 }
@@ -91,26 +93,28 @@ namespace PillarTechBabysittingKata.Controllers
         {
             return View(newAppointment);
         }
-        public int CalculateFamilyA(Appointments newAppointment)//needs to be tested and logic checked
+        public static int CalculateFamilyA(Appointments newAppointment)//needs to be tested and logic checked
         {
             int TotalCost = 0;
             List<FamilyPayRates> familyAPayRates = _context.FamilyPayRates.Where(u => u.FamilyLetter == "A").ToList();
-            foreach(var timeframe in familyAPayRates)
+            foreach (var timeframe in familyAPayRates)
             {
-                if(newAppointment.StartTime >= timeframe.StartTime && newAppointment.StartTime < timeframe.EndTime)
+                if (newAppointment.StartTime >= timeframe.StartTime && newAppointment.StartTime < timeframe.EndTime)
                 {
                     TimeSpan timeSpan = timeframe.EndTime.Subtract(newAppointment.StartTime);
                     TotalCost += Convert.ToInt32(timeSpan.TotalHours) * timeframe.PayRate;
                 }
-                else if(newAppointment.StartTime < timeframe.StartTime)
+                else if (newAppointment.StartTime < timeframe.StartTime)
                 {
                     TimeSpan timeSpan = newAppointment.EndTime.Subtract(timeframe.StartTime);
                     TotalCost += Convert.ToInt32(timeSpan.TotalHours) * timeframe.PayRate;
                 }
             }
             return TotalCost;
+
+
         }
-        public int CalculateFamilyB(Appointments newAppointment)//needs logic checked
+        public static int CalculateFamilyB(Appointments newAppointment)//needs logic checked
         {
             int TotalCost = 0;
             List<FamilyPayRates> familyBPayRates = _context.FamilyPayRates.Where(u => u.FamilyLetter == "B").ToList();
@@ -126,7 +130,7 @@ namespace PillarTechBabysittingKata.Controllers
                     TimeSpan timeSpan = timeframe.EndTime.Subtract(timeframe.StartTime);
                     TotalCost += Convert.ToInt32(timeSpan.TotalHours) * timeframe.PayRate;
                 }
-                else if(newAppointment.StartTime < timeframe.StartTime && newAppointment.EndTime <= timeframe.EndTime)
+                else if (newAppointment.StartTime < timeframe.StartTime && newAppointment.EndTime <= timeframe.EndTime)
                 {
                     TimeSpan timeSpan = timeframe.EndTime.Subtract(timeframe.StartTime);
                     TotalCost += Convert.ToInt32(timeSpan.TotalHours) * timeframe.PayRate;
@@ -139,7 +143,7 @@ namespace PillarTechBabysittingKata.Controllers
             }
             return TotalCost;
         }
-        public int CalculateFamilyC(Appointments newAppointment)//needs to be tested and logic checked
+        public static int CalculateFamilyC(Appointments newAppointment)//needs to be tested and logic checked
         {
             int TotalCost = 0;
             List<FamilyPayRates> familyCPayRates = _context.FamilyPayRates.Where(u => u.FamilyLetter == "C").ToList();
@@ -166,3 +170,5 @@ namespace PillarTechBabysittingKata.Controllers
         }
     }
 }
+
+
