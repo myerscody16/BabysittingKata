@@ -14,13 +14,19 @@ namespace PillarTechBabysittingKata.Controllers
 {
     public class HomeController : Controller
     {
-        private static BabysittingDbContext _context;
+        private BabysittingDbContext _context;
         private readonly IConfiguration _configuration;
+        public List<FamilyPayRates> familyAPayRates;
+        public List<FamilyPayRates> familyBPayRates;
+        public List<FamilyPayRates> familyCPayRates;
 
-        public HomeController(BabysittingDbContext context, IConfiguration configuration)
+        public HomeController(BabysittingDbContext context, IConfiguration configuration, List<FamilyPayRates> familyAPayRates, List<FamilyPayRates> familyBPayRates, List<FamilyPayRates> familyCPayRates)
         {
             _context = context;
             _configuration = configuration;
+            familyAPayRates = _context.FamilyPayRates.Where(u => u.FamilyLetter == "A").ToList();
+            familyBPayRates = _context.FamilyPayRates.Where(u => u.FamilyLetter == "B").ToList();
+            familyCPayRates = _context.FamilyPayRates.Where(u => u.FamilyLetter == "C").ToList();
         }
         public IActionResult Index()
         {
@@ -94,10 +100,9 @@ namespace PillarTechBabysittingKata.Controllers
         {
             return View(newAppointment);
         }
-        public static int CalculateFamilyA(Appointments newAppointment)//needs to be tested and logic checked
+        public int CalculateFamilyA(Appointments newAppointment)//needs to be tested and logic checked
         {
             int TotalCost = 0;
-            List<FamilyPayRates> familyAPayRates = _context.FamilyPayRates.Where(u => u.FamilyLetter == "A").ToList();
             foreach (var timeframe in familyAPayRates)
             {
                 if (newAppointment.StartTime >= timeframe.StartTime && newAppointment.StartTime < timeframe.EndTime)
@@ -115,10 +120,9 @@ namespace PillarTechBabysittingKata.Controllers
 
 
         }
-        public static int CalculateFamilyB(Appointments newAppointment)//needs logic checked
+        public int CalculateFamilyB(Appointments newAppointment)//needs logic checked
         {
             int TotalCost = 0;
-            List<FamilyPayRates> familyBPayRates = _context.FamilyPayRates.Where(u => u.FamilyLetter == "B").ToList();
             foreach (var timeframe in familyBPayRates)
             {
                 if (newAppointment.StartTime >= timeframe.StartTime && newAppointment.StartTime < timeframe.EndTime)
@@ -144,7 +148,7 @@ namespace PillarTechBabysittingKata.Controllers
             }
             return TotalCost;
         }
-        public static int CalculateFamilyC(Appointments newAppointment)//needs to be tested and logic checked
+        public int CalculateFamilyC(Appointments newAppointment)//needs to be tested and logic checked
         {
             int TotalCost = 0;
             List<FamilyPayRates> familyCPayRates = _context.FamilyPayRates.Where(u => u.FamilyLetter == "C").ToList();
