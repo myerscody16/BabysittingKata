@@ -16,18 +16,14 @@ namespace PillarTechBabysittingKata.Controllers
     {
         private BabysittingDbContext _context;
         private readonly IConfiguration _configuration;
-        public List<FamilyPayRates> familyAPayRates;
-        public List<FamilyPayRates> familyBPayRates;
-        public List<FamilyPayRates> familyCPayRates;
 
-        public HomeController(BabysittingDbContext context, IConfiguration configuration, List<FamilyPayRates> familyAPayRates, List<FamilyPayRates> familyBPayRates, List<FamilyPayRates> familyCPayRates)
+
+        public HomeController(BabysittingDbContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;
-            familyAPayRates = _context.FamilyPayRates.Where(u => u.FamilyLetter == "A").ToList();
-            familyBPayRates = _context.FamilyPayRates.Where(u => u.FamilyLetter == "B").ToList();
-            familyCPayRates = _context.FamilyPayRates.Where(u => u.FamilyLetter == "C").ToList();
         }
+
         public IActionResult Index()
         {
             List<Appointments> allAppointments = _context.Appointments.ToList();
@@ -100,8 +96,9 @@ namespace PillarTechBabysittingKata.Controllers
         {
             return View(newAppointment);
         }
-        public int CalculateFamilyA(Appointments newAppointment)//needs to be tested and logic checked
+        public int CalculateFamilyA(Appointments newAppointment)
         {
+            List<FamilyPayRates> familyAPayRates = _context.FamilyPayRates.Where(u => u.FamilyLetter == "A").ToList();
             int TotalCost = 0;
             foreach (var timeframe in familyAPayRates)
             {
@@ -112,16 +109,19 @@ namespace PillarTechBabysittingKata.Controllers
                 }
                 if (newAppointment.StartTime < timeframe.StartTime)
                 {
-                    TimeSpan timeSpan = newAppointment.EndTime.Subtract(timeframe.StartTime);
-                    TotalCost += Convert.ToInt32(timeSpan.TotalHours) * timeframe.PayRate;
+                    TimeSpan timeSpan = TimeSpan.Parse("00:00:00");
+                    if(newAppointment.EndTime <= TimeSpan.Parse("04:00:00") && newAppointment.EndTime > TimeSpan.Parse("00:00:00"))
+                    {
+                        timeSpan = newAppointment.EndTime.Add(TimeSpan.Parse("01:00:00"));
+                        TotalCost += Convert.ToInt32(timeSpan.TotalHours) * timeframe.PayRate;
+                    }
                 }
             }
             return TotalCost;
-
-
         }
-        public int CalculateFamilyB(Appointments newAppointment)//needs logic checked
+        public int CalculateFamilyB(Appointments newAppointment)
         {
+            List<FamilyPayRates> familyBPayRates = _context.FamilyPayRates.Where(u => u.FamilyLetter == "B").ToList();
             int TotalCost = 0;
             foreach (var timeframe in familyBPayRates)
             {
@@ -148,10 +148,10 @@ namespace PillarTechBabysittingKata.Controllers
             }
             return TotalCost;
         }
-        public int CalculateFamilyC(Appointments newAppointment)//needs to be tested and logic checked
+        public  int CalculateFamilyC(Appointments newAppointment)
         {
-            int TotalCost = 0;
             List<FamilyPayRates> familyCPayRates = _context.FamilyPayRates.Where(u => u.FamilyLetter == "C").ToList();
+            int TotalCost = 0;
             foreach (var timeframe in familyCPayRates)
             {
                 if (newAppointment.StartTime >= timeframe.StartTime && newAppointment.StartTime < timeframe.EndTime)
@@ -159,10 +159,14 @@ namespace PillarTechBabysittingKata.Controllers
                     TimeSpan timeSpan = timeframe.EndTime.Subtract(newAppointment.StartTime);
                     TotalCost += Convert.ToInt32(timeSpan.TotalHours) * timeframe.PayRate;
                 }
-                else if (newAppointment.StartTime < timeframe.StartTime)
+                if (newAppointment.StartTime < timeframe.StartTime)
                 {
-                    TimeSpan timeSpan = newAppointment.EndTime.Subtract(timeframe.StartTime);
-                    TotalCost += Convert.ToInt32(timeSpan.TotalHours) * timeframe.PayRate;
+                    TimeSpan timeSpan = TimeSpan.Parse("00:00:00");
+                    if (newAppointment.EndTime <= TimeSpan.Parse("04:00:00") && newAppointment.EndTime > TimeSpan.Parse("00:00:00"))
+                    {
+                        timeSpan = newAppointment.EndTime.Add(TimeSpan.Parse("03:00:00"));
+                        TotalCost += Convert.ToInt32(timeSpan.TotalHours) * timeframe.PayRate;
+                    }
                 }
             }
             return TotalCost;

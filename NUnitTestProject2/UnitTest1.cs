@@ -9,19 +9,20 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
+using Moq;
+
 namespace Tests
 {
-    public class Test 
+    public class Test
     {
         [SetUp]
         public void Setup()
         {
         }
-
         [TestCase("05:00:00", "12:00:00", ExpectedResult = 110)]
         [TestCase("07:00:00", "2:00:00", ExpectedResult = 120)]
         [TestCase("06:00:00", "04:00:00", ExpectedResult = 175)]
-        public int TestCalcFamA(string start, string end)
+        public static int TestCalcFamA(string start, string end)
         {
             int TotalCost = 0;
             Appointments newAppointment = new Appointments();
