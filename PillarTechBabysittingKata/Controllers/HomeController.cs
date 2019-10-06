@@ -125,24 +125,24 @@ namespace PillarTechBabysittingKata.Controllers
             int TotalCost = 0;
             foreach (var timeframe in familyBPayRates)
             {
-                if (newAppointment.StartTime >= timeframe.StartTime && newAppointment.StartTime < timeframe.EndTime)
+                if (newAppointment.StartTime >= timeframe.StartTime && newAppointment.StartTime <= timeframe.EndTime)
                 {
                     TimeSpan timeSpan = timeframe.EndTime.Subtract(newAppointment.StartTime);
                     TotalCost += Convert.ToInt32(timeSpan.TotalHours) * timeframe.PayRate;
                 }
-                else if (newAppointment.StartTime < timeframe.StartTime && newAppointment.EndTime > timeframe.EndTime)
+                if (newAppointment.StartTime <= timeframe.StartTime && newAppointment.EndTime <= timeframe.EndTime)//logic in if statement is causing the third payrate if statement to be used causing a negative timespan
                 {
-                    TimeSpan timeSpan = timeframe.EndTime.Subtract(timeframe.StartTime);
+                    TimeSpan timeSpan = newAppointment.EndTime.Subtract(timeframe.StartTime);
                     TotalCost += Convert.ToInt32(timeSpan.TotalHours) * timeframe.PayRate;
                 }
-                else if (newAppointment.StartTime < timeframe.StartTime && newAppointment.EndTime <= timeframe.EndTime)
+                //if (newAppointment.StartTime <= timeframe.StartTime && newAppointment.EndTime >= timeframe.EndTime && newAppointment.StartTime <= TimeSpan.Parse("12:00:00"))
+                //{
+                //    TimeSpan timeSpan = timeframe.EndTime.Subtract(timeframe.StartTime);
+                //    TotalCost += Convert.ToInt32(timeSpan.TotalHours) * timeframe.PayRate;
+                //}
+                if(newAppointment.StartTime >= timeframe.StartTime && newAppointment.EndTime >= TimeSpan.Parse("00:00:00") && newAppointment.EndTime <= TimeSpan.Parse("04:00:00"))
                 {
                     TimeSpan timeSpan = timeframe.EndTime.Subtract(timeframe.StartTime);
-                    TotalCost += Convert.ToInt32(timeSpan.TotalHours) * timeframe.PayRate;
-                }
-                else if (newAppointment.StartTime > timeframe.StartTime && newAppointment.EndTime <= timeframe.EndTime)
-                {
-                    TimeSpan timeSpan = timeframe.EndTime.Subtract(newAppointment.StartTime);
                     TotalCost += Convert.ToInt32(timeSpan.TotalHours) * timeframe.PayRate;
                 }
             }
