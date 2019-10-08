@@ -3,7 +3,11 @@
     ViewData["Title"] = "Create an appointment";
 }
 <h1>Create an appointment</h1>
-@ViewBag["message"]
+@{ if (TempData.Peek("message") != null)
+    {
+        <h6 style="color:red">Error: @TempData.Peek("message")</h6>
+    }
+}
 <form asp-action="CreateAppointment" method="post">
     Family:
     A: <input type="radio" name="FamilyId" value="A" required />

@@ -18,7 +18,8 @@ namespace PillarTechBabysittingKata.Controllers
     {
         private readonly IConfiguration _configuration;
         private IScheduler _scheduler;
-
+        [TempData]
+        public string message { get; set; }
         public HomeController(IScheduler scheduler, IConfiguration configuration)
         {
             _scheduler = scheduler;
@@ -73,17 +74,22 @@ namespace PillarTechBabysittingKata.Controllers
             {
                 newAppointment1.StartTime = TimeSpan.Parse("00:00:00");
             }
-            foreach(var appointment in allAppointments)
+            foreach (var appointment in allAppointments)
             {
                 if(newAppointment1.StartDate == appointment.StartDate)
                 {
-                    ViewBag["message"] = "This date has already been taken";
+                    message = "This date has already been taken, please choose another";
                     return RedirectToAction("CreateAppointment");
                 }
             }
             if(newAppointment1.StartTime >= newAppointment1.EndTime)
             {
-                ViewBag["message"] = "This time is invalid";
+                message = "That time is invalid, please choose a start time that is at least one hour before the end time";
+                return RedirectToAction("CreateAppointment");
+            }
+            else if(newAppointment1.StartTime <= TimeSpan.Parse("03:00:00") && newAppointment1.EndTime <= TimeSpan.Parse("12:00:00") && newAppointment1.EndTime >= TimeSpan.Parse("06:00:00"))
+            {
+                message = "This time is invalid";
                 return RedirectToAction("CreateAppointment");
             }
             #endregion
