@@ -2,67 +2,29 @@
     ViewData["Title"] = "Home Page";
 }
 @model IEnumerable<PillarTechBabysittingKata.Models.Appointments>
-@*Turn into 6 calendars, two for each family with appointments, one for the current month and one for the following month*@
-All of Family A's appointments
-<table class="table">
-    <tr>
-        <th>Date</th>
-        <th>Start time</th>
-        <th>End time</th>
-        <th>Total Pay</th>
-    </tr>
-    @foreach (var appointment in Model)
-    {
-        @if (appointment.FamilyId == "A")
+
+Upcoming appointments for the next two weeks
+
+    <table class="table">
+        <tr>
+            <th>Family</th>
+            <th>Date</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Total Cost</th>
+        </tr>
+
+        @foreach (var appointment in Model)
         {
-            <tr>
-                <td>@appointment.StartDate.ToShortDateString()</td>
-                <td>@appointment.StartTime</td>
-                <td>@appointment.EndTime</td>
-                <td>@appointment.TotalCost</td>
-            </tr>
+            @if (appointment.StartDate > System.DateTime.Now && appointment.StartDate < System.DateTime.Now.AddDays(14))
+            {
+                <tr>
+                    <td>@appointment.FamilyId</td>
+                    <td>@appointment.StartDate.ToShortDateString()</td>
+                    <td>@appointment.StartTime</td>
+                    <td>@appointment.EndTime</td>
+                    <td>@appointment.TotalCost</td>
+                </tr>
+            }
         }
-    }
-</table>
-All of Family B's appointments
-<table class="table">
-    <tr>
-        <th>Date</th>
-        <th>Start time</th>
-        <th>End time</th>
-        <th>Total Pay</th>
-    </tr>
-    @foreach (var appointment in Model)
-    {
-        @if (appointment.FamilyId == "B")
-        {
-            <tr>
-                <td>@appointment.StartDate.ToShortDateString()</td>
-                <td>@appointment.StartTime</td>
-                <td>@appointment.EndTime</td>
-                <td>@appointment.TotalCost</td>
-            </tr>
-        }
-    }
-</table>
-All of Family C's appointments
-<table class="table">
-    <tr>
-        <th>Date</th>
-        <th>Start time</th>
-        <th>End time</th>
-        <th>Total Pay</th>
-    </tr>
-    @foreach (var appointment in Model)
-    {
-        @if (appointment.FamilyId == "C")
-        {
-            <tr>
-                <td>@appointment.StartDate.ToShortDateString()</td>
-                <td>@appointment.StartTime</td>
-                <td>@appointment.EndTime</td>
-                <td>@appointment.TotalCost</td>
-            </tr>
-        }
-    }
-</table>
+    </table>
