@@ -108,6 +108,8 @@ namespace PillarTechBabysittingKata.Tests
         [TestCase ("05:00:00", "12:00:00", ExpectedResult = 129)]
         [TestCase("07:00:00", "2:00:00", ExpectedResult = 117)]
         [TestCase("06:00:00", "04:00:00", ExpectedResult = 168)]
+        [TestCase("05:00:00", "01:00:00", ExpectedResult = 144)]
+        [TestCase("06:00:00", "01:00:00", ExpectedResult = 123)]
         [Test]
         public int TestCalcFamC(string start, string end) {
             var scheduler = new Scheduler(mockContext.Object);

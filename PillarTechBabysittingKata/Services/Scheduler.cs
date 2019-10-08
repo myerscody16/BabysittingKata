@@ -178,7 +178,7 @@ namespace PillarTechBabysittingKata.Services
         }
         public int CalculateFamilyC(Appointments newAppointment)
         {
-            List<FamilyPayRates> familyAPayRates = _context.FamilyPayRates.Where(u => u.FamilyLetter == "A").ToList();
+            List<FamilyPayRates> familyCPayRates = _context.FamilyPayRates.Where(u => u.FamilyLetter == "C").ToList();
             int TotalCost = 0;
 
             if (newAppointment.StartTime == TimeSpan.Parse("12:00:00"))//this handles a situation where the appointment starts at midnight
@@ -201,7 +201,7 @@ namespace PillarTechBabysittingKata.Services
                     morningAppt.StartTime = newAppointment.StartTime;
                 }
                 //calculate total cost
-                foreach (var time in familyAPayRates)//we only need to handle from 12am to 4am in this loop
+                foreach (var time in familyCPayRates)//we only need to handle from 12am to 4am in this loop
                 {
                     if (time.StartTime == TimeSpan.Parse("09:00:00"))//will need to account for the hour between 11pm and midnight in another block of code
                     {
@@ -223,7 +223,7 @@ namespace PillarTechBabysittingKata.Services
                 Appointments nightAppt = new Appointments { Id = newAppointment.Id, FamilyId = newAppointment.FamilyId, StartTime = newAppointment.StartTime, StartDate = newAppointment.StartDate, EndTime = TimeSpan.Parse("12:00:00") };
 
                 //calculate total cost for night appt
-                foreach (var time in familyAPayRates)// four set ups, when both are in range, when start is in range, and when end is in range, when neither are in range
+                foreach (var time in familyCPayRates)// four set ups, when both are in range, when start is in range, and when end is in range, when neither are in range
                 {
                     if (time.StartTime == TimeSpan.Parse("09:00:00"))
                     {
@@ -251,7 +251,7 @@ namespace PillarTechBabysittingKata.Services
                     }
                 }
                 //calculate total cost for morning appt with its own foreach loop, probably can steal from the start time midnight or after region
-                foreach (var time in familyAPayRates)
+                foreach (var time in familyCPayRates)
                 {
                     if (time.StartTime == TimeSpan.Parse("09:00:00"))
                     {
@@ -268,7 +268,7 @@ namespace PillarTechBabysittingKata.Services
             #region Start time and end time before midnight
             if (newAppointment.StartTime < TimeSpan.Parse("12:00:00") && newAppointment.StartTime >= TimeSpan.Parse("05:00:00") && newAppointment.EndTime >= TimeSpan.Parse("06:00:00") && newAppointment.EndTime <= TimeSpan.Parse("12:00:00"))
             {
-                foreach (var time in familyAPayRates)
+                foreach (var time in familyCPayRates)
                 {
                     if (newAppointment.StartTime >= time.StartTime && newAppointment.EndTime >= time.EndTime)
                     {
