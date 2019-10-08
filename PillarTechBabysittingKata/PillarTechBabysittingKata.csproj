@@ -7,13 +7,11 @@
 
 
   <ItemGroup>
-    <PackageReference Include="DHTMLX.Scheduler.NET" Version="4.0.1" />
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
     <PackageReference Include="NUnit" Version="3.12.0" />
-    <PackageReference Include="Twitter.Bootstrap" Version="3.0.1.1" />
     <PackageReference Include="xunit.core" Version="2.4.1" />
   </ItemGroup>
 

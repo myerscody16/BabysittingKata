@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using DHTMLX.Scheduler;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -28,9 +28,29 @@ namespace PillarTechBabysittingKata.Controllers
         public IActionResult Index()
         {
             List<Appointments> allAppointments = _scheduler.GetAll();
-            var scheduler = new DHXScheduler();
-            scheduler.Skin = DHXScheduler.Skins.Flat;
-            return View(allAppointments);
+            List<Appointments> orderedAppointments = new List<Appointments> { };
+            foreach (Appointments appointment in allAppointments)
+            {
+                if (appointment.FamilyId == "A" && appointment.StartDate > DateTime.Now)
+                {
+                    orderedAppointments.Add(appointment);
+                }
+            }
+            foreach (Appointments appointment in allAppointments)
+            {
+                if (appointment.FamilyId == "B" && appointment.StartDate > DateTime.Now)
+                {
+                    orderedAppointments.Add(appointment);
+                }
+            }
+            foreach (Appointments appointment in allAppointments)
+            {
+                if (appointment.FamilyId == "C" && appointment.StartDate > DateTime.Now)
+                {
+                    orderedAppointments.Add(appointment);
+                }
+            }
+            return View(orderedAppointments);
         }
 
         [HttpGet]
@@ -42,6 +62,31 @@ namespace PillarTechBabysittingKata.Controllers
         [HttpPost]
         public IActionResult CreateAppointment(Appointments newAppointment)
         {
+            List<Appointments> allAppointments = _scheduler.GetAll();
+            Appointments newAppointment1 = newAppointment.ShallowCopy();
+            #region Form validation
+            if (newAppointment1.EndTime <= TimeSpan.Parse("04:00:00") && newAppointment1.StartTime < TimeSpan.Parse("12:00:00"))
+            {
+                newAppointment1.EndTime = TimeSpan.Parse("12:00:00");
+            }
+            if(newAppointment1.StartTime == TimeSpan.Parse("12:00:00"))
+            {
+                newAppointment1.StartTime = TimeSpan.Parse("00:00:00");
+            }
+            foreach(var appointment in allAppointments)
+            {
+                if(newAppointment1.StartDate == appointment.StartDate)
+                {
+                    ViewBag["message"] = "This date has already been taken";
+                    return RedirectToAction("CreateAppointment");
+                }
+            }
+            if(newAppointment1.StartTime >= newAppointment1.EndTime)
+            {
+                ViewBag["message"] = "This time is invalid";
+                return RedirectToAction("CreateAppointment");
+            }
+            #endregion
             return RedirectToAction("ConfirmPage", newAppointment);
         }
         public IActionResult ConfirmPage(Appointments newAppointment)

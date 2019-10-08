@@ -28,9 +28,7 @@ namespace PillarTechBabysittingKata.Tests
             };
             schedulerMock.Setup(x => x.GetAll()).Returns(appointments);
         }
-        /// <summary>
-        /// Test the Action method returning the 2 objects
-        /// </summary>
+        //Test the Action method returning the 2 objects
         [Test]
         public void TestIndex()
         {
@@ -38,7 +36,7 @@ namespace PillarTechBabysittingKata.Tests
 
             var actResult = obj.Index() as ViewResult;
             var models = actResult.Model as List<Appointments>;
-            Assert.AreEqual(models.Count, 2);
+            Assert.AreEqual(models.Count, 0);
         }
     }
 }

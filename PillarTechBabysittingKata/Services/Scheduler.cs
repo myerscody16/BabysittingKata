@@ -35,30 +35,34 @@ namespace PillarTechBabysittingKata.Services
             _context.Add(newAppointment);
             _context.SaveChanges();
         }
-
+        public Appointments ShallowCopy()
+        {
+            return (Appointments)this.MemberwiseClone();
+        }
         public int CalculateFamilyA(Appointments newAppointment)
         {
             List<FamilyPayRates> familyAPayRates = _context.FamilyPayRates.Where(u => u.FamilyLetter == "A").ToList();
             int TotalCost = 0;
-
-            if (newAppointment.StartTime == TimeSpan.Parse("12:00:00"))//this handles a situation where the appointment starts at midnight
+            //Appointments newAppointment1 = newAppointment;
+            Appointments newAppointment1 = newAppointment.ShallowCopy();
+            if (newAppointment1.StartTime == TimeSpan.Parse("12:00:00"))//this handles a situation where the appointment starts at midnight
             {
-                newAppointment.StartTime = TimeSpan.Parse("00:00:00");
+                newAppointment1.StartTime = TimeSpan.Parse("00:00:00");
             }
-            if (newAppointment.EndTime == TimeSpan.Parse("12:00:00"))//this handles a situation where the appointment ends at midnight
+            if (newAppointment1.EndTime == TimeSpan.Parse("12:00:00"))//this handles a situation where the appointment ends at midnight
             {
-                newAppointment.EndTime = TimeSpan.Parse("00:00:00");
+                newAppointment1.EndTime = TimeSpan.Parse("00:00:00");
             }
 
             #region Start Time at midnight or later
             //should turn this into its own method.
-            if (newAppointment.StartTime >= TimeSpan.Parse("00:00:00") && newAppointment.StartTime <= TimeSpan.Parse("03:00:00"))//handles start times after 12AM and before 3AM
+            if (newAppointment1.StartTime >= TimeSpan.Parse("00:00:00") && newAppointment1.StartTime <= TimeSpan.Parse("03:00:00"))//handles start times after 12AM and before 3AM
             {
                 //morningAppt might just be redundant because this block of code is only used if the start time is at midnight or later.
-                Appointments morningAppt = new Appointments { Id = newAppointment.Id, FamilyId = newAppointment.FamilyId, StartTime = TimeSpan.Parse("00:00:00"), StartDate = newAppointment.StartDate.AddDays(1), EndTime = newAppointment.EndTime };
+                Appointments morningAppt = new Appointments { Id = newAppointment1.Id, FamilyId = newAppointment1.FamilyId, StartTime = TimeSpan.Parse("00:00:00"), StartDate = newAppointment1.StartDate.AddDays(1), EndTime = newAppointment1.EndTime };
                 if (morningAppt.StartTime < TimeSpan.Parse("00:00:00"))//if an appointments end time is after midnight, this will override the end time to end it at midnight and still use it in calculations.
                 {
-                    morningAppt.StartTime = newAppointment.StartTime;
+                    morningAppt.StartTime = newAppointment1.StartTime;
                 }
                 //calculate total cost
                 foreach (var time in familyAPayRates)//we only need to handle from 12am to 4am in this loop
@@ -77,10 +81,10 @@ namespace PillarTechBabysittingKata.Services
             }
             #endregion
             #region Start time before midnight with end time after midnight
-            if (newAppointment.EndTime >= TimeSpan.Parse("00:00:00") && newAppointment.EndTime <= TimeSpan.Parse("04:00:00") && newAppointment.StartTime < TimeSpan.Parse("12:00:00") && newAppointment.StartTime >= TimeSpan.Parse("05:00:00"))//handles end times after midnight with start times before midnight
+            if (newAppointment1.EndTime >= TimeSpan.Parse("00:00:00") && newAppointment1.EndTime <= TimeSpan.Parse("04:00:00") && newAppointment1.StartTime < TimeSpan.Parse("12:00:00") && newAppointment1.StartTime >= TimeSpan.Parse("05:00:00"))//handles end times after midnight with start times before midnight
             {
-                Appointments morningAppt = new Appointments { Id = newAppointment.Id, FamilyId = newAppointment.FamilyId, StartTime = TimeSpan.Parse("00:00:00"), StartDate = newAppointment.StartDate.AddDays(1), EndTime = newAppointment.EndTime };
-                Appointments nightAppt = new Appointments { Id = newAppointment.Id, FamilyId = newAppointment.FamilyId, StartTime = newAppointment.StartTime, StartDate = newAppointment.StartDate, EndTime = TimeSpan.Parse("12:00:00") };
+                Appointments morningAppt = new Appointments { Id = newAppointment1.Id, FamilyId = newAppointment1.FamilyId, StartTime = TimeSpan.Parse("00:00:00"), StartDate = newAppointment1.StartDate.AddDays(1), EndTime = newAppointment1.EndTime };
+                Appointments nightAppt = new Appointments { Id = newAppointment1.Id, FamilyId = newAppointment1.FamilyId, StartTime = newAppointment1.StartTime, StartDate = newAppointment1.StartDate, EndTime = TimeSpan.Parse("12:00:00") };
 
                 //calculate total cost for night appt
                 foreach (var time in familyAPayRates)// four set ups, when both are in range, when start is in range, and when end is in range, when neither are in range
@@ -110,7 +114,7 @@ namespace PillarTechBabysittingKata.Services
                         TotalCost += Convert.ToInt32(timeSpan.TotalHours) * time.PayRate;
                     }
                 }
-                //calculate total cost for morning appt with its own foreach loop, probably can steal from the start time midnight or after region
+                //calculate total cost for morning appt
                 foreach (var time in familyAPayRates)
                 {
                     if (time.StartTime == TimeSpan.Parse("11:00:00"))
@@ -126,18 +130,18 @@ namespace PillarTechBabysittingKata.Services
             }
             #endregion
             #region Start time and end time before midnight
-            if (newAppointment.StartTime < TimeSpan.Parse("12:00:00") && newAppointment.StartTime >= TimeSpan.Parse("05:00:00") && newAppointment.EndTime >= TimeSpan.Parse("06:00:00") && newAppointment.EndTime <= TimeSpan.Parse("12:00:00"))
+            if (newAppointment1.StartTime < TimeSpan.Parse("12:00:00") && newAppointment1.StartTime >= TimeSpan.Parse("05:00:00") && newAppointment1.EndTime >= TimeSpan.Parse("06:00:00") && newAppointment1.EndTime <= TimeSpan.Parse("12:00:00"))
             {
                 foreach (var time in familyAPayRates)
                 {
-                    if (newAppointment.StartTime >= time.StartTime && newAppointment.EndTime >= time.EndTime)
+                    if (newAppointment1.StartTime >= time.StartTime && newAppointment1.EndTime >= time.EndTime)
                     {
-                        TimeSpan timeSpan = time.EndTime.Subtract(newAppointment.StartTime);
+                        TimeSpan timeSpan = time.EndTime.Subtract(newAppointment1.StartTime);
                         TotalCost += Convert.ToInt32(timeSpan.TotalHours) * time.PayRate;
                     }
-                    else if (newAppointment.StartTime >= time.StartTime && newAppointment.EndTime <= time.EndTime)
+                    else if (newAppointment1.StartTime >= time.StartTime && newAppointment1.EndTime <= time.EndTime)
                     {
-                        TimeSpan timeSpan = newAppointment.EndTime.Subtract(newAppointment.StartTime);
+                        TimeSpan timeSpan = newAppointment1.EndTime.Subtract(newAppointment1.StartTime);
                         TotalCost += Convert.ToInt32(timeSpan.TotalHours) * time.PayRate;
                     }
                 }
@@ -151,23 +155,23 @@ namespace PillarTechBabysittingKata.Services
         {
             List<FamilyPayRates> familyBPayRates = _context.FamilyPayRates.Where(u => u.FamilyLetter == "B").ToList();
             int TotalCost = 0;
-            if (newAppointment.StartTime == TimeSpan.Parse("12:00:00"))//this handles a situation where the appointment starts at midnight
+            Appointments newAppointment1 = newAppointment.ShallowCopy();
+            if (newAppointment1.StartTime == TimeSpan.Parse("12:00:00"))//this handles a situation where the appointment starts at midnight
             {
-                newAppointment.StartTime = TimeSpan.Parse("00:00:00");
+                newAppointment1.StartTime = TimeSpan.Parse("00:00:00");
             }
-            if (newAppointment.EndTime == TimeSpan.Parse("12:00:00"))//this handles a situation where the appointment ends at midnight
+            if (newAppointment1.EndTime == TimeSpan.Parse("12:00:00"))//this handles a situation where the appointment ends at midnight
             {
-                newAppointment.EndTime = TimeSpan.Parse("00:00:00");
+                newAppointment1.EndTime = TimeSpan.Parse("00:00:00");
             }
             #region Start Time at midnight or later
             //should turn this into its own method.
-            if (newAppointment.StartTime >= TimeSpan.Parse("00:00:00") && newAppointment.StartTime <= TimeSpan.Parse("03:00:00"))//handles start times after 12AM and before 3AM
+            if (newAppointment1.StartTime >= TimeSpan.Parse("00:00:00") && newAppointment1.StartTime <= TimeSpan.Parse("03:00:00"))//handles start times after 12AM and before 3AM
             {
-                //morningAppt might just be redundant because this block of code is only used if the start time is at midnight or later.
-                Appointments morningAppt = new Appointments { Id = newAppointment.Id, FamilyId = newAppointment.FamilyId, StartTime = TimeSpan.Parse("00:00:00"), StartDate = newAppointment.StartDate.AddDays(1), EndTime = newAppointment.EndTime };
+                Appointments morningAppt = new Appointments { Id = newAppointment1.Id, FamilyId = newAppointment1.FamilyId, StartTime = TimeSpan.Parse("00:00:00"), StartDate = newAppointment1.StartDate.AddDays(1), EndTime = newAppointment1.EndTime };
                 if (morningAppt.StartTime < TimeSpan.Parse("00:00:00"))//if an appointments end time is after midnight, this will override the end time to end it at midnight and still use it in calculations.
                 {
-                    morningAppt.StartTime = newAppointment.StartTime;
+                    morningAppt.StartTime = newAppointment1.StartTime;
                 }
                 //calculate total cost
                 foreach (var time in familyBPayRates)//we only need to handle from 12am to 4am in this loop
@@ -186,10 +190,10 @@ namespace PillarTechBabysittingKata.Services
             }
             #endregion
             #region Start time before midnight with end time after midnight
-            if (newAppointment.EndTime >= TimeSpan.Parse("00:00:00") && newAppointment.EndTime <= TimeSpan.Parse("04:00:00") && newAppointment.StartTime < TimeSpan.Parse("12:00:00") && newAppointment.StartTime >= TimeSpan.Parse("05:00:00"))//handles end times after midnight with start times before midnight
+            if (newAppointment1.EndTime >= TimeSpan.Parse("00:00:00") && newAppointment1.EndTime <= TimeSpan.Parse("04:00:00") && newAppointment1.StartTime < TimeSpan.Parse("12:00:00") && newAppointment1.StartTime >= TimeSpan.Parse("05:00:00"))//handles end times after midnight with start times before midnight
             {
-                Appointments morningAppt = new Appointments { Id = newAppointment.Id, FamilyId = newAppointment.FamilyId, StartTime = TimeSpan.Parse("00:00:00"), StartDate = newAppointment.StartDate.AddDays(1), EndTime = newAppointment.EndTime };
-                Appointments nightAppt = new Appointments { Id = newAppointment.Id, FamilyId = newAppointment.FamilyId, StartTime = newAppointment.StartTime, StartDate = newAppointment.StartDate, EndTime = TimeSpan.Parse("12:00:00") };
+                Appointments morningAppt = new Appointments { Id = newAppointment1.Id, FamilyId = newAppointment1.FamilyId, StartTime = TimeSpan.Parse("00:00:00"), StartDate = newAppointment1.StartDate.AddDays(1), EndTime = newAppointment1.EndTime };
+                Appointments nightAppt = new Appointments { Id = newAppointment1.Id, FamilyId = newAppointment1.FamilyId, StartTime = newAppointment1.StartTime, StartDate = newAppointment1.StartDate, EndTime = TimeSpan.Parse("12:00:00") };
 
                 //calculate total cost for night appt
                 foreach (var time in familyBPayRates)// four set ups, when both are in range, when start is in range, and when end is in range, when neither are in range
@@ -219,7 +223,7 @@ namespace PillarTechBabysittingKata.Services
                         TotalCost += Convert.ToInt32(timeSpan.TotalHours) * time.PayRate;
                     }
                 }
-                //calculate total cost for morning appt with its own foreach loop, probably can steal from the start time midnight or after region
+                //calculate total cost for morning appt 
                 foreach (var time in familyBPayRates)
                 {
                     if (time.StartTime == TimeSpan.Parse("12:00:00"))
@@ -235,18 +239,18 @@ namespace PillarTechBabysittingKata.Services
             }
             #endregion
             #region Start time and end time before midnight
-            if (newAppointment.StartTime < TimeSpan.Parse("12:00:00") && newAppointment.StartTime >= TimeSpan.Parse("05:00:00") && newAppointment.EndTime >= TimeSpan.Parse("06:00:00") && newAppointment.EndTime <= TimeSpan.Parse("12:00:00"))
+            if (newAppointment1.StartTime < TimeSpan.Parse("12:00:00") && newAppointment1.StartTime >= TimeSpan.Parse("05:00:00") && newAppointment1.EndTime >= TimeSpan.Parse("06:00:00") && newAppointment1.EndTime <= TimeSpan.Parse("12:00:00"))
             {
                 foreach (var time in familyBPayRates)
                 {
-                    if (newAppointment.StartTime >= time.StartTime && newAppointment.EndTime >= time.EndTime)
+                    if (newAppointment1.StartTime >= time.StartTime && newAppointment1.EndTime >= time.EndTime)
                     {
-                        TimeSpan timeSpan = time.EndTime.Subtract(newAppointment.StartTime);
+                        TimeSpan timeSpan = time.EndTime.Subtract(newAppointment1.StartTime);
                         TotalCost += Convert.ToInt32(timeSpan.TotalHours) * time.PayRate;
                     }
-                    else if (newAppointment.StartTime >= time.StartTime && newAppointment.EndTime <= time.EndTime)
+                    else if (newAppointment1.StartTime <= time.StartTime && newAppointment1.EndTime <= time.EndTime)
                     {
-                        TimeSpan timeSpan = newAppointment.EndTime.Subtract(newAppointment.StartTime);
+                        TimeSpan timeSpan = newAppointment1.EndTime.Subtract(time.StartTime);
                         TotalCost += Convert.ToInt32(timeSpan.TotalHours) * time.PayRate;
                     }
                 }
@@ -258,25 +262,25 @@ namespace PillarTechBabysittingKata.Services
         {
             List<FamilyPayRates> familyCPayRates = _context.FamilyPayRates.Where(u => u.FamilyLetter == "C").ToList();
             int TotalCost = 0;
-
-            if (newAppointment.StartTime == TimeSpan.Parse("12:00:00"))//this handles a situation where the appointment starts at midnight
+            Appointments newAppointment1 = newAppointment.ShallowCopy();
+            if (newAppointment1.StartTime == TimeSpan.Parse("12:00:00"))//this handles a situation where the appointment starts at midnight
             {
-                newAppointment.StartTime = TimeSpan.Parse("00:00:00");
+                newAppointment1.StartTime = TimeSpan.Parse("00:00:00");
             }
-            if (newAppointment.EndTime == TimeSpan.Parse("12:00:00"))//this handles a situation where the appointment ends at midnight
+            if (newAppointment1.EndTime == TimeSpan.Parse("12:00:00"))//this handles a situation where the appointment ends at midnight
             {
-                newAppointment.EndTime = TimeSpan.Parse("00:00:00");
+                newAppointment1.EndTime = TimeSpan.Parse("00:00:00");
             }
 
             #region Start Time at midnight or later
             //should turn this into its own method.
-            if (newAppointment.StartTime >= TimeSpan.Parse("00:00:00") && newAppointment.StartTime <= TimeSpan.Parse("03:00:00"))//handles start times after 12AM and before 3AM
+            if (newAppointment1.StartTime >= TimeSpan.Parse("00:00:00") && newAppointment1.StartTime <= TimeSpan.Parse("03:00:00"))//handles start times after 12AM and before 3AM
             {
                 //morningAppt might just be redundant because this block of code is only used if the start time is at midnight or later.
-                Appointments morningAppt = new Appointments { Id = newAppointment.Id, FamilyId = newAppointment.FamilyId, StartTime = TimeSpan.Parse("00:00:00"), StartDate = newAppointment.StartDate.AddDays(1), EndTime = newAppointment.EndTime };
+                Appointments morningAppt = new Appointments { Id = newAppointment1.Id, FamilyId = newAppointment1.FamilyId, StartTime = TimeSpan.Parse("00:00:00"), StartDate = newAppointment1.StartDate.AddDays(1), EndTime = newAppointment1.EndTime };
                 if (morningAppt.StartTime < TimeSpan.Parse("00:00:00"))//if an appointments end time is after midnight, this will override the end time to end it at midnight and still use it in calculations.
                 {
-                    morningAppt.StartTime = newAppointment.StartTime;
+                    morningAppt.StartTime = newAppointment1.StartTime;
                 }
                 //calculate total cost
                 foreach (var time in familyCPayRates)//we only need to handle from 12am to 4am in this loop
@@ -295,10 +299,10 @@ namespace PillarTechBabysittingKata.Services
             }
             #endregion
             #region Start time before midnight with end time after midnight
-            if (newAppointment.EndTime >= TimeSpan.Parse("00:00:00") && newAppointment.EndTime <= TimeSpan.Parse("04:00:00") && newAppointment.StartTime < TimeSpan.Parse("12:00:00") && newAppointment.StartTime >= TimeSpan.Parse("05:00:00"))//handles end times after midnight with start times before midnight
+            if (newAppointment1.EndTime >= TimeSpan.Parse("00:00:00") && newAppointment1.EndTime <= TimeSpan.Parse("04:00:00") && newAppointment1.StartTime < TimeSpan.Parse("12:00:00") && newAppointment1.StartTime >= TimeSpan.Parse("05:00:00"))//handles end times after midnight with start times before midnight
             {
-                Appointments morningAppt = new Appointments { Id = newAppointment.Id, FamilyId = newAppointment.FamilyId, StartTime = TimeSpan.Parse("00:00:00"), StartDate = newAppointment.StartDate.AddDays(1), EndTime = newAppointment.EndTime };
-                Appointments nightAppt = new Appointments { Id = newAppointment.Id, FamilyId = newAppointment.FamilyId, StartTime = newAppointment.StartTime, StartDate = newAppointment.StartDate, EndTime = TimeSpan.Parse("12:00:00") };
+                Appointments morningAppt = new Appointments { Id = newAppointment1.Id, FamilyId = newAppointment1.FamilyId, StartTime = TimeSpan.Parse("00:00:00"), StartDate = newAppointment1.StartDate.AddDays(1), EndTime = newAppointment1.EndTime };
+                Appointments nightAppt = new Appointments { Id = newAppointment1.Id, FamilyId = newAppointment1.FamilyId, StartTime = newAppointment1.StartTime, StartDate = newAppointment1.StartDate, EndTime = TimeSpan.Parse("12:00:00") };
 
                 //calculate total cost for night appt
                 foreach (var time in familyCPayRates)// four set ups, when both are in range, when start is in range, and when end is in range, when neither are in range
@@ -328,7 +332,7 @@ namespace PillarTechBabysittingKata.Services
                         TotalCost += Convert.ToInt32(timeSpan.TotalHours) * time.PayRate;
                     }
                 }
-                //calculate total cost for morning appt with its own foreach loop, probably can steal from the start time midnight or after region
+                //calculate total cost for morning appt
                 foreach (var time in familyCPayRates)
                 {
                     if (time.StartTime == TimeSpan.Parse("09:00:00"))
@@ -344,16 +348,16 @@ namespace PillarTechBabysittingKata.Services
             }
             #endregion
             #region Start time and end time before midnight
-            if (newAppointment.StartTime < TimeSpan.Parse("12:00:00") && newAppointment.StartTime >= TimeSpan.Parse("05:00:00") && newAppointment.EndTime >= TimeSpan.Parse("06:00:00") && newAppointment.EndTime <= TimeSpan.Parse("12:00:00"))
+            if (newAppointment1.StartTime < TimeSpan.Parse("12:00:00") && newAppointment1.StartTime >= TimeSpan.Parse("05:00:00") && newAppointment1.EndTime >= TimeSpan.Parse("06:00:00") && newAppointment1.EndTime <= TimeSpan.Parse("12:00:00"))
             {
                 foreach (var time in familyCPayRates)
                 {
-                    if (newAppointment.StartTime >= time.StartTime && newAppointment.EndTime >= time.EndTime)
+                    if (newAppointment1.StartTime >= time.StartTime && newAppointment1.EndTime >= time.EndTime)
                     {
-                        TimeSpan timeSpan = time.EndTime.Subtract(newAppointment.StartTime);
+                        TimeSpan timeSpan = time.EndTime.Subtract(newAppointment1.StartTime);
                         TotalCost += Convert.ToInt32(timeSpan.TotalHours) * time.PayRate;
                     }
-                    else if (newAppointment.StartTime >= time.StartTime && newAppointment.EndTime <= time.EndTime)
+                    else if (newAppointment1.StartTime >= time.StartTime && newAppointment1.EndTime <= time.EndTime)
                     {
                         TimeSpan timeSpan = newAppointment.EndTime.Subtract(newAppointment.StartTime);
                         TotalCost += Convert.ToInt32(timeSpan.TotalHours) * time.PayRate;

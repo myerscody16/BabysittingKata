@@ -70,6 +70,8 @@ namespace PillarTechBabysittingKata.Tests
         [TestCase ("05:00:00", "12:00:00", ExpectedResult = 110)]
         [TestCase("07:00:00", "2:00:00", ExpectedResult = 120)]
         [TestCase("06:00:00", "04:00:00", ExpectedResult = 175)]
+        [TestCase("05:00:00", "10:00:00", ExpectedResult = 75)]
+        [TestCase("07:00:00", "12:00:00", ExpectedResult = 80)]
         [Test]
         public int TestCalcFamA(string start, string end)
         {
@@ -89,6 +91,8 @@ namespace PillarTechBabysittingKata.Tests
         [TestCase("05:00:00", "12:00:00", ExpectedResult = 76)]
         [TestCase ("07:00:00", "2:00:00", ExpectedResult = 84)]
         [TestCase ("06:00:00", "04:00:00", ExpectedResult = 128)]
+        [TestCase("05:00:00", "11:00:00", ExpectedResult = 68)]
+        [TestCase("09:00:00", "2:00:00", ExpectedResult = 60)]
         [Test]
         public int TestCalcFamB(string start, string end)
         {
