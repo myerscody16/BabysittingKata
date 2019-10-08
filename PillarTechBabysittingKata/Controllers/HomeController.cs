@@ -51,6 +51,7 @@ namespace PillarTechBabysittingKata.Controllers
                     orderedAppointments.Add(appointment);
                 }
             }
+            orderedAppointments.OrderByDescending(x => x.StartDate);
             return View(orderedAppointments);
         }
 
