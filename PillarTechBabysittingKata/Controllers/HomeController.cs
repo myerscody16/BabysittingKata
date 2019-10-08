@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using DHTMLX.Scheduler;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -27,6 +28,8 @@ namespace PillarTechBabysittingKata.Controllers
         public IActionResult Index()
         {
             List<Appointments> allAppointments = _scheduler.GetAll();
+            var scheduler = new DHXScheduler();
+            scheduler.Skin = DHXScheduler.Skins.Flat;
             return View(allAppointments);
         }
 
